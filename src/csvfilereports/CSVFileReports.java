@@ -85,8 +85,8 @@ public class CSVFileReports {
         yearToDateSummary();
         monthToDateSummary();
         quarterToDateSummary();
-        Map<String, Double> inceptionToDate = new HashMap<>();
-     }
+        inceptionToDateSummary();
+    }
    
     //For each Sales Rep, generate Year to Date summary of cash amounts sold across all
     //funds.
@@ -222,6 +222,41 @@ public class CSVFileReports {
         while(yearToDateIterator.hasNext()){
             String key = yearToDateIterator.next().toString();
             Double value = quarterToDate.get(key);
+            System.out.print("          Sales Rep: " + key);
+            System.out.print("              Total: " + value);
+            System.out.println();
+        }
+    }
+    
+    public void inceptionToDateSummary(){
+        Map<String, Double> inceptionToDate = new HashMap<>();
+        
+        //for month to date
+        //calculate current month and use that as part of the key along with sales rep
+        //add the new value to map value if map already contains key or add the new key and value 
+        for(int i = 1; i < rows; i++){
+            String[] currentMonth = array[i][dateIndex].split("/");
+            if(array[i][buyOrSellTypeIndex].equalsIgnoreCase("sell")){
+                String key = (array[i][salesRepIndex]);
+                if(inceptionToDate.containsKey(key)){
+                    double cashValueFromMap = inceptionToDate.get(array[i][salesRepIndex]);
+                    String[] value = array[i][sharesPriceIndex].split("\\$");
+                    Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim()); 
+                    inceptionToDate.put(key, cashValueFromMap + valueToAdd);
+                }else{
+                    String[] value = array[i][sharesPriceIndex].split("\\$");
+                    Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim()); 
+                    inceptionToDate.put(key, valueToAdd);
+                }                   
+            }
+        }
+        
+        System.out.println("    Inception To Date: ");
+        //month To Date output
+        Iterator yearToDateIterator = inceptionToDate.keySet().iterator();
+        while(yearToDateIterator.hasNext()){
+            String key = yearToDateIterator.next().toString();
+            Double value = inceptionToDate.get(key);
             System.out.print("          Sales Rep: " + key);
             System.out.print("              Total: " + value);
             System.out.println();
