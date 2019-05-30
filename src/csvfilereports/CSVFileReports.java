@@ -84,12 +84,10 @@ public class CSVFileReports {
 
         yearToDateSummary();
         monthToDateSummary();
-        Map<String, Double> quarterToDate = new HashMap<>();
+        quarterToDateSummary();
         Map<String, Double> inceptionToDate = new HashMap<>();
- 
-        System.out.println("Sales Summary");
-    }
-    
+     }
+   
     //For each Sales Rep, generate Year to Date summary of cash amounts sold across all
     //funds.
     private void yearToDateSummary(){
@@ -138,19 +136,18 @@ public class CSVFileReports {
         for(int i = 1; i < rows; i++){
             String[] currentMonth = array[i][dateIndex].split("/");
             if(array[i][buyOrSellTypeIndex].equalsIgnoreCase("sell")){
-                    String key = (array[i][salesRepIndex] + " Month " + currentMonth[0]);
-                    if(monthToDate.containsKey(key)){
-                        double cashValueFromMap = monthToDate.get(array[i][salesRepIndex] + " Month " + currentMonth[0]);
-                        String[] value = array[i][sharesPriceIndex].split("\\$");
-                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim()); 
-                        monthToDate.put(key, cashValueFromMap + valueToAdd);
-                    }else{
-                        String[] value = array[i][sharesPriceIndex].split("\\$");
-                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim()); 
-                        monthToDate.put(key, valueToAdd);
-                    }                   
+                String key = (array[i][salesRepIndex] + " Month " + currentMonth[0]);
+                if(monthToDate.containsKey(key)){
+                    double cashValueFromMap = monthToDate.get(array[i][salesRepIndex] + " Month " + currentMonth[0]);
+                    String[] value = array[i][sharesPriceIndex].split("\\$");
+                    Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim()); 
+                    monthToDate.put(key, cashValueFromMap + valueToAdd);
+                }else{
+                    String[] value = array[i][sharesPriceIndex].split("\\$");
+                    Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim()); 
+                    monthToDate.put(key, valueToAdd);
+                }                   
             }
-            
         }
         
         System.out.println("    Month To Date: ");
@@ -159,6 +156,72 @@ public class CSVFileReports {
         while(yearToDateIterator.hasNext()){
             String key = yearToDateIterator.next().toString();
             Double value = monthToDate.get(key);
+            System.out.print("          Sales Rep: " + key);
+            System.out.print("              Total: " + value);
+            System.out.println();
+        }
+    }
+    
+    public void quarterToDateSummary(){
+        Map<String, Double> quarterToDate = new HashMap<>();
+        int quarterCounter = 1;
+        for(int i = 1; i < rows; i++){
+            String[] currentMonth = array[i][dateIndex].split("/");
+            if(array[i][buyOrSellTypeIndex].equalsIgnoreCase("sell")){
+                if(Integer.parseInt(currentMonth[0]) <= 3){
+                    if(quarterToDate.containsKey(array[i][salesRepIndex] + " First Quarter ")){
+                        double cashValueFromMap = quarterToDate.get(array[i][salesRepIndex] + " First Quarter ");
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim());
+                        quarterToDate.put(array[i][salesRepIndex] + " First Quarter ", (cashValueFromMap + valueToAdd));
+                    }else{
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim());
+                        quarterToDate.put(array[i][salesRepIndex] + " First Quarter ", (0 + valueToAdd));
+                    }
+                }else if(Integer.parseInt(currentMonth[0]) <= 6){
+                    if(quarterToDate.containsKey(array[i][salesRepIndex] + " Second Quarter ")){
+                        double cashValueFromMap = quarterToDate.get(array[i][salesRepIndex] + " Second Quarter ");
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim());
+                        quarterToDate.put(array[i][salesRepIndex] + " Second Quarter ", (cashValueFromMap + valueToAdd));
+                    }else{
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim());
+                        quarterToDate.put(array[i][salesRepIndex] + " Second Quarter ", (0 + valueToAdd));
+                    }
+                }else if(Integer.parseInt(currentMonth[0]) <= 9){
+                    if(quarterToDate.containsKey(array[i][salesRepIndex] + " Third Quarter ")){
+                        double cashValueFromMap = quarterToDate.get(array[i][salesRepIndex] + " Third Quarter ");
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim());
+                        quarterToDate.put(array[i][salesRepIndex] + " Third Quarter ", (cashValueFromMap + valueToAdd));
+                    }else{
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim());
+                        quarterToDate.put(array[i][salesRepIndex] + " Third Quarter ", (0 + valueToAdd));
+                    }
+                }else{
+                    if(quarterToDate.containsKey(array[i][salesRepIndex] + " Fourth Quarter ")){
+                        double cashValueFromMap = quarterToDate.get(array[i][salesRepIndex] + " Fourth Quarter ");
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim());
+                        quarterToDate.put(array[i][salesRepIndex] + " Fourth Quarter ", (cashValueFromMap + valueToAdd));
+                    }else{
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim());
+                        quarterToDate.put(array[i][salesRepIndex] + " Fourth Quarter ", (0 + valueToAdd));
+                    }
+                }
+            }
+        }
+        
+        System.out.println("    Quarter To Date: ");
+        //month To Date output
+        Iterator yearToDateIterator = quarterToDate.keySet().iterator();
+        while(yearToDateIterator.hasNext()){
+            String key = yearToDateIterator.next().toString();
+            Double value = quarterToDate.get(key);
             System.out.print("          Sales Rep: " + key);
             System.out.print("              Total: " + value);
             System.out.println();
