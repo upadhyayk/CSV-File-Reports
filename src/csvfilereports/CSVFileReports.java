@@ -82,8 +82,8 @@ public class CSVFileReports {
     private void salesSummary(){
         System.out.println("Sales Summary");
 
-        forYearToDateSummary();
-        Map<String, Double> monthToDate = new HashMap<>();
+        yearToDateSummary();
+        monthToDateSummary();
         Map<String, Double> quarterToDate = new HashMap<>();
         Map<String, Double> inceptionToDate = new HashMap<>();
  
@@ -92,10 +92,10 @@ public class CSVFileReports {
     
     //For each Sales Rep, generate Year to Date summary of cash amounts sold across all
     //funds.
-    private void forYearToDateSummary(){
-         Map<String, Double> yearToDate = new HashMap<>();
+    private void yearToDateSummary(){
+        Map<String, Double> yearToDate = new HashMap<>();
  
-          //for year to date
+        //for year to date
         for(int i = 1; i < rows; i++){
             String[] lastYear = array[1][dateIndex].split("/");
             String[] currentYear = array[i][dateIndex].split("/");
@@ -129,12 +129,40 @@ public class CSVFileReports {
     
     //For each Sales Rep, generate Month to Date summary of cash amounts sold across all
     //funds.
-    private void forMonthToDate(){
+    private void monthToDateSummary(){
         Map<String, Double> monthToDate = new HashMap<>();
-        for(int i = 0; i < rows; i++){
+        
+        //for month to date
+        //calculate current month and use that as part of the key along with sales rep
+        //add the new value to map value if map already contains key or add the new key and value 
+        for(int i = 1; i < rows; i++){
+            String[] currentMonth = array[i][dateIndex].split("/");
+            if(array[i][buyOrSellTypeIndex].equalsIgnoreCase("sell")){
+                    String key = (array[i][salesRepIndex] + " Month " + currentMonth[0]);
+                    if(monthToDate.containsKey(key)){
+                        double cashValueFromMap = monthToDate.get(array[i][salesRepIndex] + " Month " + currentMonth[0]);
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim()); 
+                        monthToDate.put(key, cashValueFromMap + valueToAdd);
+                    }else{
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim()); 
+                        monthToDate.put(key, valueToAdd);
+                    }                   
+            }
             
         }
-
+        
+        System.out.println("    Month To Date: ");
+        //month To Date output
+        Iterator yearToDateIterator = monthToDate.keySet().iterator();
+        while(yearToDateIterator.hasNext()){
+            String key = yearToDateIterator.next().toString();
+            Double value = monthToDate.get(key);
+            System.out.print("          Sales Rep: " + key);
+            System.out.print("              Total: " + value);
+            System.out.println();
+        }
     }
     
     //For each Sales Rep, generate a summary of the net amount held by
