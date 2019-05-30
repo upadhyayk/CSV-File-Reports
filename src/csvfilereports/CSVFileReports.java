@@ -80,13 +80,61 @@ public class CSVFileReports {
     //Date, and Inception to Date summary of cash amounts sold across all
     //funds.
     private void salesSummary(){
-        Map<String, Double> yearToDate = new HashMap<>();
+        System.out.println("Sales Summary");
+
+        forYearToDateSummary();
         Map<String, Double> monthToDate = new HashMap<>();
         Map<String, Double> quarterToDate = new HashMap<>();
         Map<String, Double> inceptionToDate = new HashMap<>();
+ 
+        System.out.println("Sales Summary");
+    }
+    
+    //For each Sales Rep, generate Year to Date summary of cash amounts sold across all
+    //funds.
+    private void forYearToDateSummary(){
+         Map<String, Double> yearToDate = new HashMap<>();
+ 
+          //for year to date
+        for(int i = 1; i < rows; i++){
+            String[] lastYear = array[1][dateIndex].split("/");
+            String[] currentYear = array[i][dateIndex].split("/");
+            if(lastYear[2].equals(currentYear[2])){
+                if(array[i][buyOrSellTypeIndex].equalsIgnoreCase("sell")){
+                    if(yearToDate.containsKey(array[i][salesRepIndex])){
+                        double cashValueFromMap = yearToDate.get(array[i][salesRepIndex]);
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim());
+                        yearToDate.put(array[i][salesRepIndex], (cashValueFromMap + valueToAdd));
+                    }else{
+                        String[] value = array[i][sharesPriceIndex].split("\\$");
+                        Double valueToAdd = Double.parseDouble(value[1].trim()) * Double.parseDouble(array[i][sharesIndex].trim());
+                        yearToDate.put(array[i][salesRepIndex], (0 + valueToAdd));
+                    }
+                }
+            }
+        }
         
-        
-        
+        System.out.println("    Year To Date: ");
+        //year To Date output
+        Iterator yearToDateIterator = yearToDate.keySet().iterator();
+        while(yearToDateIterator.hasNext()){
+            String key = yearToDateIterator.next().toString();
+            Double value = yearToDate.get(key);
+            System.out.print("          Sales Rep: " + key);
+            System.out.print("              Total: " + value);
+            System.out.println();
+        }
+    }
+    
+    //For each Sales Rep, generate Month to Date summary of cash amounts sold across all
+    //funds.
+    private void forMonthToDate(){
+        Map<String, Double> monthToDate = new HashMap<>();
+        for(int i = 0; i < rows; i++){
+            
+        }
+
     }
     
     //For each Sales Rep, generate a summary of the net amount held by
@@ -493,68 +541,3 @@ public class CSVFileReports {
         }
     }
 }
-
-
-
-
-/*    //read from CSV File and then store in 2d Array using bufferedreader and reading line by line
-    private static void storeCsvIntoArray() throws FileNotFoundException, IOException{
-        String line = "";
-        int j = 0;
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("data.csv"));
-        while(j < rows){
-            if((line = bufferedReader.readLine()) != null){
-                String[] values = line.split(",");
-                for(int i = 0; i < columns; i++){
-                    array[j][i] = values[i];
-                }
-                j++;
-            } 
-        }
-        
-        //make sure the 2d array is filled correctly
-        for(int i = 0; i < rows; i++){
-            for(j = 0; j <columns; j++){
-                System.out.print(array[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println("value at row 6 column 5 is : " + array[6][5]);
-    }
-*/
-
-
-
-
-/*
- //make a list of string array. The list can be added to for each investor 
-        Map<String, List<String[]>> netAmountSummary = new HashMap();
-        List<String[]> listOfInvestorInfo = new ArrayList<String[]>();
-        for(int i = 0; i < rows; i++){
-            //if map contains sales rep then add new investor or change info as needed 
-            //else create new string[] containing investor info and add to map 
-            if(netAmountSummary.containsKey(array[i][salesRepIndex])){
-                
-            }else{
-                String[] stringArray= new String[3];
-                stringArray[0] = array[i][investorIndex];
-                String[] number = array[i][sharesPriceIndex].split("\\$");
-                //add/subtract shares and proft based on whether buying/selling
-                if(array[i][buyOrSellTypeIndex].equalsIgnoreCase("buy")){
-                    Double valueToAdd = 0-Double.parseDouble(number[1].trim());
-                    stringArray[1] = "$" + Double.toString(valueToAdd);
-                    stringArray[2] = array[i][sharesIndex];
-                }else{
-                    Double valueToAdd = 0+Double.parseDouble(number[1].trim());
-                    stringArray[1] = "$" + Double.toString(valueToAdd);
-                    Double shareToAdd = 0 - Double.parseDouble(array[i][sharesIndex]);
-                    stringArray[2] = Double.toString(shareToAdd);
-                }
-                
-                listOfInvestorInfo.add(stringArray);
-                netAmountSummary.put(array[i][salesRepIndex], listOfInvestorInfo);
-            }
-        }
-        
-        
-*/
